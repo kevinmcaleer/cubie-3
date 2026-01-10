@@ -91,7 +91,7 @@ class Cubie3:
                     command = result['partial'].lower() 
                     break;  # Exit inner loop to start listening for new command
 
-                if command in ["forward", "backward", "strafe left", "strafe right", "rotate left", "rotate right", "stop"]:
+                if command in ["forward", "backward", "strafe left", "strafe right", "rotate left", "rotate right", "stop", "good bye", "goodbye"]:
                     print(f"Executing command: {command}")
                     if command == "forward":
                         await self.forward(0.2)
@@ -124,7 +124,7 @@ class Cubie3:
                         self.say("Goodbye!")
                         goodbye = True
 
-                    await asyncio.sleep(2)
+                    await asyncio.sleep(0.5)
                     break  # Exit inner loop to start listening for new command
 
     def say(self, text):
