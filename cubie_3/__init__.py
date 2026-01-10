@@ -88,6 +88,7 @@ class Cubie3:
                 else:
                     print(f"\r\x1b[Kpartial: {result['partial']}", end="", flush=True)
                     command = result['partial'].lower() 
+                    break;  # Exit inner loop to start listening for new command
 
                 if command in ["forward", "backward", "strafe left", "strafe right", "rotate left", "rotate right", "stop"]:
                     print(f"Executing command: {command}")
