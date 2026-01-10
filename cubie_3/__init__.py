@@ -7,10 +7,10 @@ from fusion_hat.tts import Espeak
 class Cubie3:
     def __init__(self):
         # Setup motors
-        self.m0 = Motor(0)
-        self.m1 = Motor(1)
-        self.m2 = Motor(2)
-        self.m3 = Motor(3)
+        self.m0 = Motor('M0')
+        self.m1 = Motor('M1')
+        self.m2 = Motor('M2')
+        self.m3 = Motor('M3')
 
         # Setup speech-to-text and text-to-speech
         self.stt = STT(language="en-us")
@@ -26,16 +26,18 @@ class Cubie3:
         self.tts.set_pitch(80)
 
     async def forward(self, speed=0.5):
-        self.m0.forward(speed)
-        self.m1.forward(speed)
-        self.m2.forward(speed)
-        self.m3.forward(speed)
+        power = speed * 100
+        self.m0.power(power)
+        self.m1.power(power)
+        self.m2.power(power)
+        self.m3.power(power)
 
     async def backward(self, speed=0.5):
-        self.m0.backward(speed)
-        self.m1.backward(speed)
-        self.m2.backward(speed)
-        self.m3.backward(speed)
+        power = -speed * 100
+        self.m0.power(power)
+        self.m1.power(power)
+        self.m2.power(power)
+        self.m3.power(power)
 
     async def stop(self):
         self.m0.stop()
@@ -44,28 +46,32 @@ class Cubie3:
         self.m3.stop()
         
     async def strafe_left(self, speed=0.5):
-        self.m0.backward(speed)
-        self.m1.forward(speed)
-        self.m2.forward(speed)
-        self.m3.backward(speed)
+        power = speed * 100
+        self.m0.power(-power)
+        self.m1.power(power)
+        self.m2.power(power)
+        self.m3.power(-power)
 
     async def strafe_right(self, speed=0.5):
-        self.m0.forward(speed)
-        self.m1.backward(speed)
-        self.m2.backward(speed)
-        self.m3.forward(speed)
+        power = speed * 100
+        self.m0.power(power)
+        self.m1.power(-power)
+        self.m2.power(-power)
+        self.m3.power(power)
 
     async def rotate_left(self, speed=0.5):
-        self.m0.backward(speed)
-        self.m1.forward(speed)
-        self.m2.backward(speed)
-        self.m3.forward(speed)
+        power = speed * 100
+        self.m0.power(-power)
+        self.m1.power(power)
+        self.m2.power(-power)
+        self.m3.power(power)
 
     async def rotate_right(self, speed=0.5):
-        self.m0.forward(speed)
-        self.m1.backward(speed)
-        self.m2.forward(speed)
-        self.m3.backward(speed)
+        power = speed * 100
+        self.m0.power(power)
+        self.m1.power(-power)
+        self.m2.power(power)
+        self.m3.power(-power)
 
     async def spin_in_place(self, speed=0.5):
         await self.rotate_right(speed)
