@@ -47,17 +47,17 @@ class Cubie3:
         
     async def strafe_left(self, speed=0.5):
         power = speed * 100
-        self.m0.power(-power)
-        self.m1.power(power)
-        self.m2.power(power)
-        self.m3.power(-power)
-
-    async def strafe_right(self, speed=0.5):
-        power = speed * 100
         self.m0.power(power)
         self.m1.power(-power)
         self.m2.power(-power)
         self.m3.power(power)
+
+    async def strafe_right(self, speed=0.5):
+        power = speed * 100
+        self.m0.power(-power)
+        self.m1.power(power)
+        self.m2.power(power)
+        self.m3.power(-power)
 
     async def rotate_left(self, speed=0.5):
         power = speed * 100
@@ -93,27 +93,27 @@ class Cubie3:
                 if command in ["forward", "backward", "strafe left", "strafe right", "rotate left", "rotate right", "stop"]:
                     print(f"Executing command: {command}")
                     if command == "forward":
-                        await self.forward(0.6)
+                        await self.forward(0.2)
                         await asyncio.sleep(0.5)
                         await self.stop()
                     elif command == "backward":
-                        await self.backward(0.6)
-                        await asyncio.sleep(0.5)    
+                        await self.backward(0.2)
+                        await asyncio.sleep(0.5)
                         await self.stop()
                     elif command == "strafe left":
-                        await self.strafe_left(0.6)
+                        await self.strafe_left(0.2)
                         await asyncio.sleep(0.5)
                         await self.stop()
                     elif command == "strafe right":
-                        await self.strafe_right(0.6)
+                        await self.strafe_right(0.2)
                         await asyncio.sleep(0.5)
                         await self.stop()
                     elif command == "rotate left":
-                        await self.rotate_left(0.6)
+                        await self.rotate_left(0.2)
                         await asyncio.sleep(0.5)
                         await self.stop()
                     elif command == "rotate right":
-                        await self.rotate_right(0.6)
+                        await self.rotate_right(0.2)
                         await asyncio.sleep(0.5)
                         await self.stop()
                     elif command == "stop":
