@@ -77,7 +77,8 @@ class Cubie3:
         await self.rotate_right(speed)
   
     async def listen(self):
-        while True:
+        goodbye = False
+        while True and not goodbye:
             print("Say something")
             command = ""
             for result in self.stt.listen(stream=True):
@@ -119,6 +120,10 @@ class Cubie3:
                     elif command == "stop":
                         await self.stop()
 
+                    elif command == "goodbye":
+                        self.say("Goodbye!")
+                        goodbye = True
+                        
                     await asyncio.sleep(2)
                     break  # Exit inner loop to start listening for new command
 
