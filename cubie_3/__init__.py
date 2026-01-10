@@ -61,17 +61,17 @@ class Cubie3:
 
     async def rotate_left(self, speed=0.5):
         power = speed * 100
-        self.m0.power(-power)
+        self.m0.power(power)
         self.m1.power(power)
         self.m2.power(-power)
-        self.m3.power(power)
+        self.m3.power(-power)
 
     async def rotate_right(self, speed=0.5):
         power = speed * 100
-        self.m0.power(power)
+        self.m0.power(-power)
         self.m1.power(-power)
         self.m2.power(power)
-        self.m3.power(-power)
+        self.m3.power(power)
 
     async def spin_in_place(self, speed=0.5):
         await self.rotate_right(speed)
