@@ -79,6 +79,7 @@ class Cubie3:
     async def listen(self):
         while True:
             print("Say something")
+            command = ""
             for result in self.stt.listen(stream=True):
                 if result["done"]:
                     print(f"\r\x1b[Kfinal: {result['final']}")
@@ -92,21 +93,27 @@ class Cubie3:
                     print(f"Executing command: {command}")
                     if command == "forward":
                         await self.forward(0.6)
+                        await asyncio.sleep(0.5)
                         await self.stop()
                     elif command == "backward":
                         await self.backward(0.6)
+                        await asyncio.sleep(0.5)    
                         await self.stop()
                     elif command == "strafe left":
                         await self.strafe_left(0.6)
+                        await asyncio.sleep(0.5)
                         await self.stop()
                     elif command == "strafe right":
                         await self.strafe_right(0.6)
+                        await asyncio.sleep(0.5)
                         await self.stop()
                     elif command == "rotate left":
                         await self.rotate_left(0.6)
+                        await asyncio.sleep(0.5)
                         await self.stop()
                     elif command == "rotate right":
                         await self.rotate_right(0.6)
+                        await asyncio.sleep(0.5)
                         await self.stop()
                     elif command == "stop":
                         await self.stop()
