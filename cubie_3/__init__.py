@@ -119,7 +119,7 @@ class Cubie3:
                         await self.stop()
 
                     await asyncio.sleep(2)
-                await self.stop()
+                    break  # Exit inner loop to start listening for new command
 
     def say(self, text):
         """ Use text-to-speech to say the given text """
