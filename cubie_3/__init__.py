@@ -120,10 +120,10 @@ class Cubie3:
                     elif command == "stop":
                         await self.stop()
 
-                    elif command == "goodbye":
+                    elif command in ["goodbye","good bye"]:
                         self.say("Goodbye!")
                         goodbye = True
-                        
+
                     await asyncio.sleep(2)
                     break  # Exit inner loop to start listening for new command
 
