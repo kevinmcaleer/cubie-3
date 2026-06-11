@@ -3,6 +3,6 @@
 
 github-copilot-sdk     # Claude via the Copilot subscription (primary judge)
 anthropic              # Anthropic API fallback judge
-opencv-python
-numpy
+opencv-python<4.12    # 4.12+ requires numpy>=2, which breaks the Pi's system picamera2/simplejpeg (built against numpy 1.x)
+numpy<2                # match the system numpy 1.x the Hat/camera C-extensions are compiled against
 onnxruntime            # Depth Anything V2 inference
