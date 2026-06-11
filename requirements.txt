@@ -1,0 +1,8 @@
+# Cubie-3 AI Lab Inspector
+# fusion_hat and picamera2 are installed system-wide on the Pi (apt / SunFounder installer)
+
+github-copilot-sdk     # Claude via the Copilot subscription (primary judge)
+anthropic              # Anthropic API fallback judge
+opencv-python
+numpy
+onnxruntime            # Depth Anything V2 inference
