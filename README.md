@@ -13,6 +13,8 @@ A Python control library for Cubie 3, a 4-wheeled omnidirectional robot with voi
 
 - Python 3.x
 - `fusion_hat` library (provides motor control, speech-to-text, and text-to-speech)
+- A camera (the AI Lab Inspector demos use a Raspberry Pi Camera via `libcamera`)
+- For the AI Lab Inspector: a **GitHub Copilot subscription** (preferred) or an **Anthropic API key** (fallback)
 
 ## Installation
 
@@ -22,6 +24,37 @@ Clone the repository:
 git clone https://github.com/kevinmcaleer/cubie-3.git
 cd cubie-3
 ```
+
+Install the dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+### Authenticating the AI judge
+
+The AI Lab Inspector demos (`demo03_survey.py`, `demo04_patrol.py`) send camera
+frames to Claude for judgement. By default they use Claude via your **GitHub
+Copilot subscription**, which needs a one-time login on the Pi.
+
+> **Note:** This is *not* the same as `gh auth login`. Copilot rejects classic
+> `ghp_` personal access tokens — you need a proper Copilot login.
+
+The Copilot CLI is bundled with the `github-copilot-sdk` package. Log in with:
+
+```bash
+# Resolve the bundled Copilot CLI and run its OAuth device-flow login
+COPILOT=$(python -c "import copilot, os; print(os.path.dirname(copilot.__file__))")/bin/copilot
+"$COPILOT" login
+```
+
+Follow the printed URL and device code, then approve with the GitHub account
+that holds your Copilot subscription. The token is stored in `~/.copilot/` and
+picked up automatically on the next run.
+
+**Alternative — Anthropic API:** if you'd rather use the Anthropic API directly,
+set `ANTHROPIC_API_KEY` in your environment and build the judge with
+`make_judge(prefer="anthropic")`.
 
 ## Usage
 
@@ -52,6 +85,24 @@ python demo01.py
 ```
 
 This sequentially demonstrates all movement commands.
+
+### AI Lab Inspector
+
+Cubie judges the tidiness of your workshop using Claude's vision. Requires the
+camera and a logged-in AI judge (see [Authenticating the AI judge](#authenticating-the-ai-judge)).
+
+Survey mode — you carry Cubie to each zone and it scores what it sees:
+
+```bash
+python demo03_survey.py
+```
+
+Patrol mode — Cubie drives a route itself, with a depth-based obstacle guard
+that can veto any move:
+
+```bash
+python demo04_patrol.py
+```
 
 ### Programmatic Control
 

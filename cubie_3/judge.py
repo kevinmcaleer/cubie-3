@@ -27,6 +27,16 @@ Keep the verdict under 40 words — it goes through text-to-speech.
 Base everything only on what is actually visible in the image."""
 
 
+class JudgeError(RuntimeError):
+    """Raised when the AI backend can't produce a judgement (auth, network, etc.)."""
+
+
+def _is_transient(message):
+    """True for errors worth retrying — passing 401s, rate limits, server/network blips."""
+    msg = message.lower()
+    return any(s in msg for s in ("401", "429", "500", "502", "503", "504", "unauthorized", "timeout", "temporarily"))
+
+
 @dataclass
 class ZoneJudgement:
     zone: str
@@ -69,17 +79,46 @@ class CopilotJudge:
             await self._client.stop()
             self._client = None
 
-    async def judge_zone(self, jpeg_bytes, zone):
+    async def judge_zone(self, jpeg_bytes, zone, attempts=3):
+        # The Copilot endpoint occasionally returns a transient 401/5xx on a
+        # fresh session even when properly logged in; retry a couple of times
+        # before giving up so one blip doesn't abort a whole survey.
+        last_error = None
+        for attempt in range(1, attempts + 1):
+            try:
+                return await self._judge_once(jpeg_bytes, zone)
+            except JudgeError as exc:
+                last_error = exc
+                if attempt < attempts and _is_transient(str(exc)):
+                    print(f"  (transient judge error, retrying {attempt}/{attempts - 1}: {exc})")
+                    await asyncio.sleep(2 * attempt)
+                    continue
+                raise
+        raise last_error
+
+    async def _judge_once(self, jpeg_bytes, zone):
         from copilot.session import PermissionHandler
-        from copilot.session_events import AssistantMessageData, SessionIdleData
+        from copilot.session_events import (
+            AssistantMessageData,
+            ModelCallFailureData,
+            SessionErrorData,
+            SessionIdleData,
+        )
 
         reply_parts = []
+        errors = []
         done = asyncio.Event()
 
         def on_event(event):
             match event.data:
                 case AssistantMessageData() as data:
                     reply_parts.append(data.content)
+                case SessionErrorData() as data:
+                    errors.append(f"{data.error_type}: {data.message}")
+                    done.set()
+                case ModelCallFailureData() as data:
+                    errors.append(str(data))
+                    done.set()
                 case SessionIdleData():
                     done.set()
 
@@ -98,6 +137,14 @@ class CopilotJudge:
             )
             await done.wait()
 
+        if errors:
+            raise JudgeError("Copilot session failed: " + "; ".join(errors))
+        if not "".join(reply_parts).strip():
+            raise JudgeError(
+                "Copilot returned an empty reply (likely not authenticated). "
+                "Run `copilot login` on the Pi, or set ANTHROPIC_API_KEY and "
+                "build the judge with make_judge(prefer='anthropic')."
+            )
         return _parse_judgement("".join(reply_parts), zone)
 
 
